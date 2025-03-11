@@ -1,5 +1,5 @@
-## AltCraft | Test task
+# AltCraft | Test task
 
-# Demo
+## Demo
 
 [Demo](https://altcraft-test.vercel.app)
