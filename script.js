@@ -7,11 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let displayedCount = 0; // количество уже отображённых строк
   const batchSize = 20; // число строк, подгружаемых за один раз
 
-  // Загружаем данные из JSON
-  fetch(
-    "https://github.com/altkraft/for-applicants/raw/master/frontend/titanic/passengers.json"
-  )
-    .then((response) => response.json())
+  // Загружаем данные из файла passengers.json, который находится на сервере
+  fetch("passengers.json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Ошибка загрузки данных");
+      }
+      return response.json();
+    })
     .then((data) => {
       passengers = data;
       filteredPassengers = passengers;
@@ -23,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function createRow(passenger) {
     const tr = document.createElement("tr");
 
-    // Формируем ячейки для имени, пола, возраста и информации о выживании.
+    // Создаем ячейки для имени, пола, возраста и информации о выживании
     const nameTd = document.createElement("td");
     nameTd.textContent = passenger.name || "";
 
@@ -59,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     displayedCount += nextBatch.length;
   }
 
-  // Слушаем событие прокрутки для реализации lazy load
+  // Реализуем lazy load при прокрутке страницы
   window.addEventListener("scroll", () => {
     if (
       window.innerHeight + window.scrollY >=
@@ -69,11 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Обработка поиска
+  // Обработка поиска по всем столбцам
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
 
-    // Фильтруем пассажиров по всем необходимым полям
     filteredPassengers = passengers.filter((passenger) => {
       const name = (passenger.name || "").toLowerCase();
       const sex = (passenger.sex || "").toLowerCase();
@@ -88,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-    // Очищаем таблицу и сбрасываем счётчик подгруженных строк
+    // Очищаем таблицу и сбрасываем счётчик отображенных строк
     tableBody.innerHTML = "";
     displayedCount = 0;
     loadMoreRows();
